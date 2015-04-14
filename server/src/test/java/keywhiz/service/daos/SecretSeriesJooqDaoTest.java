@@ -16,6 +16,7 @@
 
 package keywhiz.service.daos;
 
+import com.google.common.collect.ImmutableMap;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import keywhiz.TestDBRule;
@@ -42,9 +43,10 @@ public class SecretSeriesJooqDaoTest {
     int before = tableSize();
     OffsetDateTime now = OffsetDateTime.now();
 
-    long id = secretSeriesJooqDao.createSecretSeries("newSecretSeries", "creator", "desc", null, null);
+    long id = secretSeriesJooqDao.createSecretSeries("newSecretSeries", "creator", "desc", null,
+        ImmutableMap.of("foo", "bar"));
     SecretSeries expected = new SecretSeries(id, "newSecretSeries", "desc", now, "creator", now,
-        "creator", null, null);
+        "creator", null, ImmutableMap.of("foo", "bar"));
 
     assertThat(tableSize()).isEqualTo(before + 1);
 
