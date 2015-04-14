@@ -16,10 +16,11 @@
 
 package keywhiz.service.daos;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import keywhiz.api.model.SecretSeries;
-import keywhiz.jooq.tables.Secrets;
-import keywhiz.jooq.tables.records.SecretsRecord;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 
@@ -27,6 +28,9 @@ import static keywhiz.jooq.tables.Secrets.SECRETS;
 
 class SecretSeriesJooqMapper implements RecordMapper<Record, SecretSeries> {
   public SecretSeries map(Record r) {
+    Gson gson = new Gson();
+    Type optionsType = new TypeToken<HashMap<String, String>>() {}.getType();
+
     return new SecretSeries(
         r.getValue(SECRETS.ID),
         r.getValue(SECRETS.NAME),
@@ -36,6 +40,6 @@ class SecretSeriesJooqMapper implements RecordMapper<Record, SecretSeries> {
         r.getValue(SECRETS.UPDATEDAT),
         r.getValue(SECRETS.UPDATEDBY),
         r.getValue(SECRETS.TYPE),
-        ImmutableMap.of() /* TODO: handle generationOptions */);
+        gson.fromJson(r.getValue(SECRETS.OPTIONS), optionsType));
   }
 }
