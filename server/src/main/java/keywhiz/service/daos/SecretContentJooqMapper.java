@@ -17,6 +17,10 @@
 package keywhiz.service.daos;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import keywhiz.api.model.SecretContent;
 import keywhiz.jooq.tables.records.SecretsContentRecord;
 import org.jooq.Record;
@@ -26,8 +30,11 @@ class SecretContentJooqMapper implements RecordMapper<Record, SecretContent> {
   public SecretContent map(Record record) {
     SecretsContentRecord r = (SecretsContentRecord) record;
 
+    Gson gson = new Gson();
+    Type metadataType = new TypeToken<HashMap<String, String>>() {}.getType();
+
     return SecretContent.of(r.getId(), r.getSecretid(), r.getEncryptedContent(), r.getVersion(),
         r.getCreatedat(), r.getCreatedby(), r.getUpdatedat(), r.getUpdatedby(),
-        ImmutableMap.of() /* TODO: handle metadata */);
+        ImmutableMap.copyOf(gson.fromJson(r.getMetadata(), metadataType)));
   }
 }
